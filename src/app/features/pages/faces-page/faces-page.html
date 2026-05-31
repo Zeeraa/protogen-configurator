@@ -1,0 +1,27 @@
+<div class="row g-3">
+  <div class="col-12">
+    <h1>Faces</h1>
+  </div>
+
+  <div class="col-12">
+    <button class="btn btn-sm btn-primary" type="button" (click)="addFace()">
+      Add face
+    </button>
+  </div>
+
+  @for (face of configService.faces(); track face.uuid) {
+  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-4">
+    <div class="card h-100">
+      <div class="card-img-top face-preview-container">
+        <app-led-matrix-canvas [config]="configService.config()" [drawData]="face.data" mode="static" />
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">{{ face.name }}</h5>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-sm btn-primary" type="button" (click)="editFace(face)">Edit</button>
+      </div>
+    </div>
+  </div>
+  }
+</div>

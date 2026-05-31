@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.sidebar {
+  padding: 1.5rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bs-border-color) transparent;
+}
+
+.sidebar-link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--bs-body-color);
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--bs-link-color);
+    background-color: var(--bs-tertiary-bg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-link-color);
+    outline-offset: -2px;
+  }
+
+  &.active {
+    color: var(--bs-link-color);
+    font-weight: 600;
+    background-color: var(--bs-tertiary-bg);
+  }
+}

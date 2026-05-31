@@ -1,0 +1,223 @@
+<div class="row g-3">
+  <div class="col-12">
+    <h1>Matrix layout editor</h1>
+  </div>
+  <div class="col-12 editor-container">
+    <app-led-matrix-canvas
+      [editable]="true"
+      [allLit]="true"
+      [showIndex]="true"
+      [highlightedUuid]="selectedUuid()"
+      (matrixClicked)="selectMatrix($event)"
+      [(config)]="matrixConfig"
+    />
+  </div>
+
+  @if (duplicateIndexes().length > 0) {
+    <div class="col-12">
+      <div class="alert alert-warning d-flex align-items-center gap-2 mb-0" role="alert">
+        <span>
+          Duplicate matrix {{ duplicateIndexes().length === 1 ? 'index' : 'indexes' }}:
+          <strong>{{ duplicateIndexes().join(', ') }}</strong>.
+          This may cause rendering issues.
+        </span>
+      </div>
+    </div>
+  }
+
+  @if (hasOverlap()) {
+    <div class="col-12">
+      <div class="alert alert-warning d-flex align-items-center gap-2 mb-0" role="alert">
+        <span>One or more matrices are overlapping. This may cause issues in the face editor.</span>
+      </div>
+    </div>
+  }
+
+  <div class="col-12 d-flex gap-2">
+    <button class="btn btn-sm btn-primary" type="button" (click)="addMatrix()">
+      Add matrix
+    </button>
+    <button class="btn btn-sm btn-success" type="button" (click)="save()">
+      Save
+    </button>
+  </div>
+
+  <!-- ── Pin config ───────────────────────────────────────────── -->
+  <div class="col-12 col-lg-auto">
+    <div class="card">
+      <div class="card-header fw-semibold">Matrix pins</div>
+      <div class="card-body">
+        <div class="d-flex flex-wrap gap-3">
+          <div>
+            <label for="pin-din" class="form-label">DIN</label>
+            <input
+              id="pin-din"
+              type="number"
+              class="form-control form-control-sm pin-input"
+              [value]="matrixConfig().dinPin"
+              (change)="updatePin('dinPin', $event)"
+            />
+          </div>
+          <div>
+            <label for="pin-cs" class="form-label">CS</label>
+            <input
+              id="pin-cs"
+              type="number"
+              class="form-control form-control-sm pin-input"
+              [value]="matrixConfig().csPin"
+              (change)="updatePin('csPin', $event)"
+            />
+          </div>
+          <div>
+            <label for="pin-clk" class="form-label">CLK</label>
+            <input
+              id="pin-clk"
+              type="number"
+              class="form-control form-control-sm pin-input"
+              [value]="matrixConfig().clkPin"
+              (change)="updatePin('clkPin', $event)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Brightness config ─────────────────────────────────────── -->
+  <div class="col-12 col-lg-auto">
+    <div class="card">
+      <div class="card-header fw-semibold">Brightness</div>
+      <div class="card-body">
+        <label for="default-brightness" class="form-label">Default brightness (0–15)</label>
+        <input
+          id="default-brightness"
+          type="number"
+          min="0"
+          max="15"
+          class="form-control form-control-sm pin-input"
+          [value]="matrixConfig().defaultBrightness"
+          (change)="updateBrightness($event)"
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (selectedMatrix(); as matrix) {
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span class="fw-semibold">Matrix {{ matrix.index }}</span>
+          <button class="btn btn-sm btn-danger" type="button" (click)="deleteSelected()">Delete</button>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-auto">
+              <label [for]="'sel-index'" class="form-label">Index</label>
+              <input
+                id="sel-index"
+                type="number"
+                class="form-control form-control-sm"
+                [value]="matrix.index"
+                (change)="updateSelected('index', $event)"
+              />
+            </div>
+            <div class="col-auto">
+              <label [for]="'sel-x'" class="form-label">X</label>
+              <input
+                id="sel-x"
+                type="number"
+                class="form-control form-control-sm"
+                [value]="matrix.x"
+                (change)="updateSelected('x', $event)"
+              />
+            </div>
+            <div class="col-auto">
+              <label [for]="'sel-y'" class="form-label">Y</label>
+              <input
+                id="sel-y"
+                type="number"
+                class="form-control form-control-sm"
+                [value]="matrix.y"
+                (change)="updateSelected('y', $event)"
+              />
+            </div>
+            <div class="col-auto">
+              <label [for]="'sel-color'" class="form-label">Color</label>
+              <select
+                id="sel-color"
+                class="form-select form-select-sm"
+                [ngModel]="matrix.color"
+                (ngModelChange)="updateSelectedColor($event)"
+              >
+                @for (opt of colorOptions; track opt.value) {
+                  <option [value]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-auto">
+              <label [for]="'sel-rotation'" class="form-label">Input side (DIN)</label>
+              <select
+                id="sel-rotation"
+                class="form-select form-select-sm"
+                [ngModel]="matrix.rotation ?? 0"
+                (ngModelChange)="updateSelectedRotation($event)"
+              >
+                @for (opt of rotationOptions; track opt.value) {
+                  <option [ngValue]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── Matrix table ─────────────────────────────────────────── -->
+  @if (sortedMatrixes().length > 0) {
+    <div class="col-12">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">Index</th>
+              <th scope="col">X</th>
+              <th scope="col">Y</th>
+              <th scope="col">Color</th>
+              <th scope="col" style="width: 1%; white-space: nowrap"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (matrix of sortedMatrixes(); track matrix.uuid) {
+              <tr
+                [class.table-primary]="selectedUuid() === matrix.uuid"
+                style="cursor: pointer"
+                (click)="selectMatrix(matrix)"
+              >
+                <td>{{ matrix.index }}</td>
+                <td>{{ matrix.x }}</td>
+                <td>{{ matrix.y }}</td>
+                <td>
+                  <span
+                    class="d-inline-block rounded me-2"
+                    style="width: 14px; height: 14px; vertical-align: middle"
+                    [style.background]="matrix.color"
+                  ></span>
+                  {{ matrix.color }}
+                </td>
+                <td class="text-end" style="white-space: nowrap">
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    type="button"
+                    style="cursor: pointer"
+                    (click)="$event.stopPropagation(); deleteMatrix(matrix.uuid)"
+                  >Delete</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

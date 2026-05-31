@@ -1,0 +1,32 @@
+<header>
+  <nav class="navbar bg-body-tertiary border-bottom">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Protogen Configurator</a>
+    </div>
+  </nav>
+</header>
+
+<div class="app-body d-flex">
+  <aside class="app-sidebar border-end flex-shrink-0" [class.collapsed]="sidebarCollapsed()" aria-label="Sidebar">
+    <div class="sidebar-toggle-row border-bottom">
+      <button
+        type="button"
+        class="btn btn-sm sidebar-toggle-btn"
+        (click)="toggleSidebar()"
+        [attr.aria-expanded]="!sidebarCollapsed()"
+        aria-label="Toggle sidebar"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"
+          aria-hidden="true" focusable="false">
+          <path fill-rule="evenodd"
+            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+        </svg>
+      </button>
+    </div>
+    <app-sidebar />
+  </aside>
+
+  <main class="app-main flex-grow-1 p-4">
+    <router-outlet />
+  </main>
+</div>

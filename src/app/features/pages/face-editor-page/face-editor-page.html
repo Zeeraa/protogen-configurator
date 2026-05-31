@@ -1,0 +1,73 @@
+<div class="row g-3">
+  <div class="col-12 d-flex align-items-center gap-3">
+    <a class="btn btn-sm btn-outline-secondary" routerLink="/faces">&larr; Back</a>
+    <h4 class="mb-0">Edit face</h4>
+  </div>
+
+  <div class="col-12 editor-container">
+    <app-led-matrix-canvas mode="drawing" [(config)]="matrixConfig" [(drawData)]="data" [symmetric]="symmetric()" />
+  </div>
+
+  <div class="col-12 col-md-6">
+    <label for="face-name" class="form-label">Name</label>
+    <input id="face-name" type="text" class="form-control" [value]="name()" (input)="updateName($event)" />
+  </div>
+
+  <div class="col-12 col-md-6">
+    <div class="form-check mb-2">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        id="brightness-override-toggle"
+        [checked]="brightnessOverride() !== null"
+        (change)="brightnessOverride.set(brightnessOverride() !== null ? null : 8)"
+      />
+      <label class="form-check-label" for="brightness-override-toggle">Override brightness</label>
+    </div>
+    @if (brightnessOverride() !== null) {
+      <label for="face-brightness" class="form-label">Brightness (0–15)</label>
+      <input
+        id="face-brightness"
+        type="number"
+        min="0"
+        max="15"
+        class="form-control"
+        [value]="brightnessOverride()"
+        (change)="updateBrightnessOverride($event)"
+      />
+    }
+  </div>
+
+  <div class="col-12">
+    <div class="form-check form-switch">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        role="switch"
+        id="symmetric-toggle"
+        [checked]="symmetric()"
+        (change)="symmetric.set(!symmetric())"
+      />
+      <label class="form-check-label" for="symmetric-toggle">Symmetric drawing</label>
+    </div>
+  </div>
+
+  <div class="col-12 d-flex gap-2">
+    <button class="btn btn-success" type="button" (click)="save()">Save</button>
+    <button class="btn btn-danger" type="button" (click)="openDeleteModal()">Delete face</button>
+  </div>
+</div>
+
+<ng-template #deleteModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Delete face</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    Are you sure you want to delete <strong>{{ name() }}</strong>? This cannot be undone.
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-danger" ngbAutofocus (click)="modal.close(); deleteFace()">Delete</button>
+  </div>
+</ng-template>

@@ -1,0 +1,195 @@
+<div class="row g-4">
+
+  <!-- ── Default Face ──────────────────────────────────────────── -->
+  <div class="col-12">
+    <h1>Default Face</h1>
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-4">
+    @if (defaultFaceInvalid()) {
+      <div class="alert alert-danger" role="alert">
+        Default face is required. Please select a valid face.
+      </div>
+    }
+    <label for="default-face-select" class="form-label">Default face</label>
+    <select
+      id="default-face-select"
+      class="form-select"
+      [class.is-invalid]="defaultFaceInvalid()"
+      [ngModel]="effectiveDefaultFaceUuid()"
+      (ngModelChange)="updateDefaultFace($event)"
+    >
+      <option [ngValue]="null">Select default face</option>
+      @for (face of faces(); track face.uuid) {
+        <option [ngValue]="face.uuid">{{ face.name }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- ── Inputs ────────────────────────────────────────────────── -->
+  <div class="col-12">
+    <h1>Inputs</h1>
+  </div>
+
+  @for (input of localConfig().inputs; track input.uuid) {
+    <div class="col-12 col-md-6 col-xl-4">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span class="fw-semibold">{{ input.name || 'Input (pin ' + input.pin + ')' }}</span>
+          <button class="btn btn-sm btn-danger" type="button" (click)="openDeleteInputModal(input.uuid)">Delete</button>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+
+            <div class="col-12">
+              <label [for]="'input-name-' + input.uuid" class="form-label">Name</label>
+              <input
+                [id]="'input-name-' + input.uuid"
+                type="text"
+                class="form-control form-control-sm"
+                [value]="input.name"
+                (input)="updateInputField(input.uuid, 'name', $any($event.target).value)"
+              />
+            </div>
+
+            <div class="col-auto">
+              <label [for]="'input-pin-' + input.uuid" class="form-label">Pin</label>
+              <input
+                [id]="'input-pin-' + input.uuid"
+                type="number"
+                class="form-control form-control-sm"
+                [value]="input.pin"
+                (change)="updateInputPin(input.uuid, $event)"
+              />
+            </div>
+
+            <div class="col-auto">
+              <label [for]="'input-mode-' + input.uuid" class="form-label">Mode</label>
+              <select
+                [id]="'input-mode-' + input.uuid"
+                class="form-select form-select-sm"
+                [ngModel]="input.mode"
+                (ngModelChange)="updateInputField(input.uuid, 'mode', $event)"
+              >
+                @for (opt of pinModeOptions; track opt.value) {
+                  <option [value]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-12">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [id]="'input-invert-' + input.uuid"
+                  [checked]="input.invert"
+                  (change)="updateInputField(input.uuid, 'invert', !input.invert)"
+                />
+                <label class="form-check-label" [for]="'input-invert-' + input.uuid">Invert</label>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-12">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="fw-semibold">Actions</span>
+                <button class="btn btn-sm btn-primary" type="button" (click)="addFaceAction(input.uuid)">+ Add action</button>
+              </div>
+
+              @if (input.actions.length === 0) {
+                <p class="text-body-secondary small mb-0">No actions configured.</p>
+              }
+
+              @for (action of input.actions; track action.uuid) {
+                @let fa = asFaceAction(action);
+                <div class="card mb-2">
+                  <div class="card-body py-2">
+                    <div class="row g-2 align-items-end">
+
+                      <div class="col-12">
+                        <label [for]="'action-face-' + action.uuid" class="form-label mb-1">Face</label>
+                        <select
+                          [id]="'action-face-' + action.uuid"
+                          class="form-select form-select-sm"
+                          [ngModel]="fa.faceUuid"
+                          (ngModelChange)="updateFaceActionField(input.uuid, action.uuid, 'faceUuid', $event)"
+                        >
+                          @if (faces().length === 0) {
+                            <option value="">No faces configured</option>
+                          }
+                          @for (face of faces(); track face.uuid) {
+                            <option [value]="face.uuid">{{ face.name }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-auto">
+                        <label [for]="'action-mode-' + action.uuid" class="form-label mb-1">Trigger</label>
+                        <select
+                          [id]="'action-mode-' + action.uuid"
+                          class="form-select form-select-sm"
+                          [ngModel]="fa.mode"
+                          (ngModelChange)="updateFaceActionField(input.uuid, action.uuid, 'mode', $event)"
+                        >
+                          @for (opt of faceTriggerModeOptions; track opt.value) {
+                            <option [value]="opt.value">{{ opt.label }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      @if (fa.mode === FaceTriggerMode.Timer) {
+                        <div class="col-auto">
+                          <label [for]="'action-dur-' + action.uuid" class="form-label mb-1">Duration (ms)</label>
+                          <input
+                            [id]="'action-dur-' + action.uuid"
+                            type="number"
+                            min="0"
+                            class="form-control form-control-sm"
+                            [value]="fa.duration"
+                            (change)="updateFaceActionDuration(input.uuid, action.uuid, $event)"
+                          />
+                        </div>
+                      }
+
+                      <div class="col-12 d-flex justify-content-end">
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          type="button"
+                          (click)="deleteAction(input.uuid, action.uuid)"
+                        >Remove</button>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="col-12 d-flex gap-2">
+    <button class="btn btn-sm btn-primary" type="button" (click)="addInput()">Add input</button>
+    <button class="btn btn-sm btn-success" type="button" (click)="save()">Save</button>
+  </div>
+
+</div>
+
+<ng-template #deleteModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Delete input</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    Are you sure you want to delete <strong>{{ pendingDeleteName() }}</strong>? This cannot be undone.
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-danger" ngbAutofocus (click)="modal.close(); confirmDeleteInput()">Delete</button>
+  </div>
+</ng-template>

@@ -1,0 +1,71 @@
+<div
+  #viewport
+  class="viewport"
+  [class.viewport--drawing]="mode() === 'drawing'"
+  [class.viewport--static]="mode() === 'static'"
+  (wheel)="onWheel($event)"
+  (mousedown)="onCanvasMouseDown($event)"
+  (touchstart)="onViewportTouchStart($event)"
+>
+  <!-- Infinite grid background (hidden in static mode) -->
+  @if (mode() !== 'static') {
+    <div class="grid-bg" [style]="gridStyle()"></div>
+
+    <!-- Board-sized grid lines -->
+    <div class="board-grid" [style]="boardGridStyle()"></div>
+  }
+
+  <!-- Pannable / zoomable canvas -->
+  <div class="canvas" [style.transform]="transform()">
+    @for (matrix of config().matrixes; track matrix.index) {
+      <div
+        class="board"
+        role="button"
+        [attr.tabindex]="mode() !== 'static' ? 0 : null"
+        [class.board--editable]="isEditable()"
+        [class.board--drawing]="mode() === 'drawing'"
+        [class.board--highlighted]="highlightedUuid() === matrix.uuid"
+        [style.left.px]="matrix.x * cellPx"
+        [style.top.px]="matrix.y * cellPx"
+        [style.width.px]="boardPx"
+        [style.height.px]="boardPx"
+        (mousedown)="onBoardMouseDown($event, matrix)"
+        (click)="onBoardClick($event, matrix)"
+        (keydown)="onBoardKeyDown($event, matrix)"
+        (touchstart)="onBoardTouchStart($event, matrix)"
+      >
+        <!-- 8x8 LED cells -->
+        @for (row of gridLines.slice(0, boardCells); track row) {
+          @for (col of gridLines.slice(0, boardCells); track col) {
+            <div
+              class="cell"
+              [style.width.px]="cellPx"
+              [style.height.px]="cellPx"
+              [style.background-color]="getLedColor(matrix, row, col)"
+            ></div>
+          }
+        }
+
+        <!-- Board label -->
+        @if (showIndex()) {
+          <span class="board-label">{{ matrix.index }}</span>
+        }
+
+        <!-- DIN / DOUT direction arrows (layout-editor editable mode only) -->
+        @if (isEditable()) {
+          @for (arrow of boardArrows(matrix); track arrow.type) {
+            <div
+              class="board-arrow"
+              [class.board-arrow--in]="arrow.type === 'in'"
+              [class.board-arrow--out]="arrow.type === 'out'"
+              [class.board-arrow--left]="arrow.side === 'left'"
+              [class.board-arrow--right]="arrow.side === 'right'"
+              [class.board-arrow--top]="arrow.side === 'top'"
+              [class.board-arrow--bottom]="arrow.side === 'bottom'"
+            >{{ arrow.label }}</div>
+          }
+        }
+      </div>
+    }
+  </div>
+</div>
