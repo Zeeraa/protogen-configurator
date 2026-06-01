@@ -58,9 +58,13 @@
                 [id]="'input-pin-' + input.uuid"
                 type="number"
                 class="form-control form-control-sm"
+                [class.is-invalid]="isPinUsedByMatrix(input.pin)"
                 [value]="input.pin"
                 (change)="updateInputPin(input.uuid, $event)"
               />
+              @if (isPinUsedByMatrix(input.pin)) {
+                <div class="invalid-feedback">This pin is already used by the matrix (DIN/CS/CLK).</div>
+              }
             </div>
 
             <div class="col-auto">

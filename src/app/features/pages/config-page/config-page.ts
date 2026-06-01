@@ -57,6 +57,15 @@ export class ConfigPage implements OnInit, OnDestroy, HasUnsavedChanges {
   protected readonly localConfig = signal<SystemConfig>(this.configService.config());
   protected readonly faces = computed(() => this.configService.faces());
 
+  protected readonly matrixPins = computed(() => {
+    const c = this.localConfig();
+    return new Set([c.dinPin, c.csPin, c.clkPin]);
+  });
+
+  protected isPinUsedByMatrix(pin: number): boolean {
+    return this.matrixPins().has(pin);
+  }
+
   protected readonly effectiveDefaultFaceUuid = computed(() => {
     const uuid = this.localConfig().defaultFaceUuid;
     if (!uuid) return null;
