@@ -27,7 +27,7 @@ export class FacesPage {
 
   protected addFace(): void {
     const matrixCount = this.configService.config().matrixes.length;
-    const dataSize = Math.max(32, matrixCount * 8);
+    const dataSize = Math.max(8, matrixCount * 2);
     const face: FaceData = {
       uuid: uuidv4(),
       name: 'New face',

@@ -131,6 +131,11 @@ export class FaceEditorPage implements OnInit, OnDestroy, HasUnsavedChanges {
   }
 
   protected deleteFace(): void {
+    // Sync originals to current state so hasUnsavedChanges returns false,
+    // preventing the unsaved-changes guard from prompting a second confirmation.
+    this.originalName.set(this.name());
+    this.originalData.set([...this.data()]);
+    this.originalBrightnessOverride.set(this.brightnessOverride());
     this.configService.deleteFace(this.uuid());
     this.router.navigate(['/faces']);
   }
