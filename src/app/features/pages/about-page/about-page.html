@@ -1,0 +1,114 @@
+<div class="row">
+  <div class="col-12">
+    <h1>Protogen Configurator</h1>
+    <p>A tool for configuring LED matrixes for Protogens.</p>
+  </div>
+
+  <div class="col-12 mt-4">
+    <h2>Getting started</h2>
+    <p>
+      Start by wiring up your LED matrix displays and inputs to your microcontroller.
+    </p>
+
+    <h4>Matrix pinout</h4>
+    <p>
+      Below is the pinout used by the default configuration. If you want to change your pins, you can do so on the <a
+        routerLink="/matrix-config">Matrix Config</a> page.
+    </p>
+    <table class="table table-striped table-bordered table-sm w-auto">
+      <thead>
+        <tr>
+          <th>Matrix Pin</th>
+          <th>Arduino Pin</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>CS</td>
+          <td>10</td>
+        </tr>
+
+        <tr>
+          <td>DIN</td>
+          <td>11</td>
+        </tr>
+
+        <tr>
+          <td>CLK</td>
+          <td>13</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      If your matrixes are rotated, you can adjust the rotation on the <a routerLink="/matrix-config">Matrix Config</a>
+      page as well.
+    </p>
+
+    <h4>Inputs</h4>
+    <p>
+      Any unused digital pin can be used as an input to trigger actions. Actions are configured on the
+      <a routerLink="/config">Config</a> page and allow you to assign buttons to different faces.
+    </p>
+    <p>
+      The mode of the input pin can be configured in the dropdown. The available modes are:
+    </p>
+    <ul>
+      <li><strong>Normal</strong>: The input will require an external pull-up or pull-down resistor.</li>
+      <li><strong>Pull-up (Recommended)</strong>: The input will be internally connected to a HIGH state. Connect to ground
+        to activate.
+      </li>
+      <li><strong>Pull-down</strong>: The input will be internally connected to a LOW state. <span class="text-warning">Not
+          all microcontrollers support this mode, so use with caution.</span></li>
+    </ul>
+    <p>
+      You can also check the "invert" option to invert the input state.
+    </p>
+
+    <h4>Changing the default matrix layout</h4>
+    <p>
+      The default config uses 2 matrixes for the eyes, 4 for the mouth, and 1 for the nose. If you use a different layout,
+      you can change the matrix configuration on the <a routerLink="/matrix-config">Matrix Config</a> page.
+    </p>
+  </div>
+
+
+  <div class="col-12 mt-4">
+    <h2>Creating faces</h2>
+    <p>
+      You can create and edit faces on the <a routerLink="/faces">Faces</a> page. To draw a symmetric face, make sure to
+      check the "Symmetric drawing" option in the editor.
+    </p>
+
+    <p>
+      After creating a face, you can assign it as the default face on the <a routerLink="/config">Config</a> page and also
+      assign it to inputs to trigger it.
+    </p>
+  </div>
+
+  <div class="col-12 mt-4">
+    <h2>Uploading to Microcontroller</h2>
+    <p>
+      To export the configuration as code for your microcontroller, go to the <a routerLink="/export">Import/Export</a>
+      page. From there, click the "Export for Arduino" button to generate and download the code as an Arduino sketch file.
+    </p>
+
+    <p>
+      After downloading the .ino file, you can open it in the Arduino IDE and flash it to your microcontroller.
+    </p>
+  </div>
+
+  <div class="col-12 mt-5 mb-3">
+    <hr>
+    <p>
+      Protogen Configurator is a free and open source project licensed under the MIT License. You can find the source
+      code on <a href="https://github.com/Zeeraa/protogen-configurator" target="_blank" rel="noopener noreferrer">GitHub</a>.
+    </p>
+
+    <p>
+      If you find this project useful and want to support it, consider sponsoring me on <a
+        href="https://github.com/sponsors/AntonUden" target="_blank" rel="noopener noreferrer">GitHub Sponsors</a> or buying me a coffee on <a
+        href="https://ko-fi.com/zeeraa" target="_blank" rel="noopener noreferrer">Ko-fi</a>.
+    </p>
+  </div>
+</div>
