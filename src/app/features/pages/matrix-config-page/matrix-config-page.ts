@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { uuidv7 } from 'uuidv7';
+import { uuidv4 } from 'uuidv7';
 import { ConfigurationService, SystemConfig, MatrixPosition } from '../../../core/services/configuration-service';
 import { ToastrService } from 'ngx-toastr';
 import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
@@ -170,7 +170,7 @@ export class MatrixConfigPage implements OnInit, OnDestroy, HasUnsavedChanges {
         ...cfg,
         matrixes: [
           ...cfg.matrixes,
-          { uuid: uuidv7(), index: nextIndex, x, y, color: lastColor },
+          { uuid: uuidv4(), index: nextIndex, x, y, color: lastColor },
         ],
       };
     });

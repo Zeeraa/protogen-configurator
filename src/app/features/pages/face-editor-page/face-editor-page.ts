@@ -113,6 +113,18 @@ export class FaceEditorPage implements OnInit, OnDestroy, HasUnsavedChanges {
     this.router.navigate(['/faces']);
   }
 
+  protected exportFace(): void {
+    const brightnessOverride = this.brightnessOverride();
+    const name = this.name();
+    const payload: Omit<FaceData, 'uuid'> & { brightness?: number } = {
+      name,
+      data: this.data(),
+      ...(brightnessOverride !== null ? { brightness: brightnessOverride } : {}),
+    };
+    const filename = `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'face'}.face.json`;
+    this.downloadFile(filename, JSON.stringify(payload, null, 2));
+  }
+
   protected openDeleteModal(): void {
     this.deleteModalRef?.close();
     this.deleteModalRef = this.modalService.open(this.deleteModal(), { centered: true });
@@ -121,5 +133,16 @@ export class FaceEditorPage implements OnInit, OnDestroy, HasUnsavedChanges {
   protected deleteFace(): void {
     this.configService.deleteFace(this.uuid());
     this.router.navigate(['/faces']);
+  }
+
+  private downloadFile(filename: string, content: string): void {
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+    a.remove();
   }
 }

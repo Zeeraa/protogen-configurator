@@ -3,9 +3,12 @@
     <h1>Faces</h1>
   </div>
 
-  <div class="col-12">
+  <div class="col-12 d-flex gap-2 flex-wrap">
     <button class="btn btn-sm btn-primary" type="button" (click)="addFace()">
       Add face
+    </button>
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="triggerFileInput()">
+      Import face
     </button>
   </div>
 
@@ -25,3 +28,28 @@
   </div>
   }
 </div>
+
+<input
+  #fileInput
+  type="file"
+  accept=".json"
+  class="d-none"
+  aria-hidden="true"
+  (change)="onFileSelected($event)"
+/>
+
+<ng-template #importModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="import-face-modal-title">Import face</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" aria-labelledby="import-face-modal-title">
+    @if (pendingImport(); as face) {
+      Import <strong>{{ face.name }}</strong> and add it to your faces?
+    }
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" ngbAutofocus (click)="modal.close(); confirmImport()">Import</button>
+  </div>
+</ng-template>

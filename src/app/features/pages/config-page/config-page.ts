@@ -12,7 +12,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { uuidv7 } from 'uuidv7';
+import { uuidv4 } from 'uuidv7';
 import {
   Action,
   ConfigurationService,
@@ -107,7 +107,7 @@ export class ConfigPage implements OnInit, OnDestroy, HasUnsavedChanges {
 
   protected addInput(): void {
     const input: InputConfig = {
-      uuid: uuidv7(),
+      uuid: uuidv4(),
       name: '',
       pin: 0,
       mode: PinMode.INPUT_PULLUP,
@@ -154,7 +154,7 @@ export class ConfigPage implements OnInit, OnDestroy, HasUnsavedChanges {
 
   protected addFaceAction(inputUuid: string): void {
     const action: FaceAction = {
-      uuid: uuidv7(),
+      uuid: uuidv4(),
       type: 'face',
       faceUuid: this.faces()[0]?.uuid ?? '',
       mode: FaceTriggerMode.Permanent,
