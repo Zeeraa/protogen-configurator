@@ -7,11 +7,48 @@
 
   <div class="row mt-4">
     <div class="col-12">
-      <h1>Generate code</h1>
+      <h2>Transfer configuration</h2>
+      <p class="text-muted">Back up or move your full editor configuration between devices.</p>
+    </div>
+
+    <div class="col-12 d-flex gap-2 flex-wrap">
+      <button class="btn btn-outline-primary" type="button" (click)="exportJson()">Export config as JSON</button>
+      <button class="btn btn-outline-secondary" type="button" (click)="triggerFileInput()">Import config from
+        JSON</button>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-12">
+      <h2>Generate code</h2>
     </div>
 
     <div class="col-12">
-      <button class="btn btn-primary" (click)="exportArduino()">Export for Arduino</button>
+      <button class="btn btn-primary me-2" (click)="exportArduino()">Export for Arduino</button>
+      <button class="btn btn-success" (click)="downloadCode()" [disabled]="code() === null">Download generated code</button>
+    </div>
+  </div>
+
+  <div class="col-12 mt-4">
+    <div class="code-window">
+      <ngx-monaco-editor [options]="editorOptions()" [(ngModel)]="code" />
     </div>
   </div>
 </div>
+
+<input #fileInput type="file" accept=".json" class="d-none" aria-hidden="true" (change)="onFileSelected($event)" />
+
+<ng-template #importModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="import-modal-title">Import configuration</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" aria-labelledby="import-modal-title">
+    Are you sure you want to import this configuration? <strong>This will overwrite all current editor data</strong> and
+    cannot be undone.
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-danger" ngbAutofocus (click)="modal.close(); confirmImport()">Import</button>
+  </div>
+</ng-template>

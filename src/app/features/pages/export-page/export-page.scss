@@ -1,0 +1,9 @@
+.code-window {
+  height: 600px;
+
+  ngx-monaco-editor {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
