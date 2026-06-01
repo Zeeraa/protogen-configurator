@@ -1,0 +1,6 @@
+services:
+  protogen-configurator:
+    image: zeeraa/protogen-configurator
+    restart: unless-stopped
+    ports:
+      - "80:80"
