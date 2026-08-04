@@ -29,7 +29,7 @@
     "uuidv7": "^1.2.1"
   },
   "devDependencies": {
-    "@angular/build": "^21.2.7",
+    "@angular/build": "^22.1.2",
     "@angular/cli": "^21.2.7",
     "@angular/compiler-cli": "^21.2.0",
     "@angular/localize": "^21.2.0",
