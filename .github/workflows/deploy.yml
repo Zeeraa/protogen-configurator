@@ -21,6 +21,9 @@ jobs:
 
       - run: npm run build -- --base-href /protogen-configurator/
 
+      # GitHub Pages serves 404.html for unknown paths, letting the SPA router handle deep links
+      - run: cp dist/protogen-configurator/browser/index.html dist/protogen-configurator/browser/404.html
+
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
