@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit
 import { FormsModule } from '@angular/forms';
 import { uuidv4 } from 'uuidv7';
 import { ConfigurationService, SystemConfig, MatrixPosition } from '../../../core/services/configuration-service';
-import { ToastrService } from 'ngx-toastr';
 import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { LedMatrixCanvas } from '../../components/led-matrix-canvas/led-matrix-canvas';
+import { ToastService } from 'ngx-yet-another-toast-library';
 
 const COLOR_OPTIONS: { label: string; value: string }[] = [
   { label: 'White', value: '#FFFFFF' },
@@ -29,7 +29,7 @@ const ROTATION_OPTIONS: { label: string; value: 0 | 90 | 180 | 270 }[] = [
 })
 export class MatrixConfigPage implements OnInit, OnDestroy, HasUnsavedChanges {
   private readonly configService = inject(ConfigurationService);
-  private readonly toastr = inject(ToastrService);
+  private readonly toast = inject(ToastService);
 
   protected readonly colorOptions = COLOR_OPTIONS;
   protected readonly rotationOptions = ROTATION_OPTIONS;
@@ -99,7 +99,7 @@ export class MatrixConfigPage implements OnInit, OnDestroy, HasUnsavedChanges {
     const config = this.matrixConfig();
     this.savedConfig.set(JSON.stringify(config));
     this.configService.saveConfig(config);
-    this.toastr.success('Matrix configuration saved');
+    this.toast.success('Matrix configuration saved');
   }
 
   protected updatePin(field: 'dinPin' | 'csPin' | 'clkPin', event: Event): void {

@@ -9,7 +9,7 @@ import {
 } from '../configuration-service';
 import { ConfigurationValidationService } from '../configuration-validation-service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'ngx-yet-another-toast-library';
 import { firstValueFrom } from 'rxjs';
 import { BaseCodegen } from './base-codegen';
 
@@ -19,7 +19,7 @@ import { BaseCodegen } from './base-codegen';
 export class ArduinoCodegenService extends BaseCodegen {
   private readonly configuration = inject(ConfigurationService);
   private readonly validation = inject(ConfigurationValidationService);
-  private readonly toastr = inject(ToastrService);
+  private readonly toast = inject(ToastService);
   private readonly http = inject(HttpClient);
 
   public async generateArduinoCode(): Promise<string | null> {
@@ -35,16 +35,16 @@ export class ArduinoCodegenService extends BaseCodegen {
         this.http.get('/templates/arduino.ino', { responseType: 'text' })
       );
       if (!templateCode || !templateCode.startsWith('// Arduino Template')) {
-        this.toastr.error('Failed to load code template.');
+        this.toast.error('Failed to load code template.');
         return null;
       }
 
       return this.processTemplate(templateCode, config);
     } catch (err) {
       if (err instanceof HttpErrorResponse) {
-        this.toastr.error(`Failed to load code template: ${err.status} ${err.statusText}`);
+        this.toast.error(`Failed to load code template: ${err.status} ${err.statusText}`);
       } else {
-        this.toastr.error('An unexpected error occurred while loading the code template.');
+        this.toast.error('An unexpected error occurred while loading the code template.');
       }
       return null;
     }

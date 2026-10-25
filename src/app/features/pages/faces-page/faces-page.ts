@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, TemplateRef, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'ngx-yet-another-toast-library';
 import { uuidv4 } from 'uuidv7';
 import { ConfigurationService, FaceData } from '../../../core/services/configuration-service';
 import { LedMatrixCanvas } from '../../components/led-matrix-canvas/led-matrix-canvas';
@@ -16,7 +16,7 @@ import { LedMatrixCanvas } from '../../components/led-matrix-canvas/led-matrix-c
 export class FacesPage {
   private readonly router = inject(Router);
   private readonly modalService = inject(NgbModal);
-  private readonly toastr = inject(ToastrService);
+  private readonly toast = inject(ToastService);
   protected readonly configService = inject(ConfigurationService);
 
   private readonly importModal = viewChild.required<TemplateRef<unknown>>('importModal');
@@ -54,14 +54,14 @@ export class FacesPage {
       try {
         const parsed: unknown = JSON.parse(e.target?.result as string);
         if (!this.isValidFaceData(parsed)) {
-          this.toastr.error('The selected file does not contain valid face data.');
+          this.toast.error('The selected file does not contain valid face data.');
           return;
         }
         this.pendingImport.set({ ...parsed, uuid: uuidv4() });
         this.importModalRef?.close();
         this.importModalRef = this.modalService.open(this.importModal(), { centered: true });
       } catch {
-        this.toastr.error('Failed to parse the selected file. Make sure it is a valid JSON file.');
+        this.toast.error('Failed to parse the selected file. Make sure it is a valid JSON file.');
       }
     };
     reader.readAsText(file);
@@ -72,7 +72,7 @@ export class FacesPage {
     if (!face) return;
     this.configService.addFace(face);
     this.pendingImport.set(null);
-    this.toastr.success(`Face "${face.name}" imported successfully.`);
+    this.toast.success(`Face "${face.name}" imported successfully.`);
   }
 
   private isValidFaceData(obj: unknown): obj is Omit<FaceData, 'uuid'> {

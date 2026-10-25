@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'ngx-yet-another-toast-library';
 import { uuidv4 } from 'uuidv7';
 import {
   Action,
@@ -46,7 +46,7 @@ const FACE_TRIGGER_MODE_OPTIONS: { label: string; value: FaceTriggerMode }[] = [
 export class ConfigPage implements OnInit, OnDestroy, HasUnsavedChanges {
   private readonly configService = inject(ConfigurationService);
   private readonly modalService = inject(NgbModal);
-  private readonly toastr = inject(ToastrService);
+  private readonly toast = inject(ToastService);
 
   private readonly deleteModal = viewChild.required<TemplateRef<unknown>>('deleteModal');
 
@@ -105,7 +105,7 @@ export class ConfigPage implements OnInit, OnDestroy, HasUnsavedChanges {
     const config = this.localConfig();
     this.configService.saveConfig(config);
     this.savedSnapshot.set(JSON.stringify(config));
-    this.toastr.success('Configuration saved');
+    this.toast.success('Configuration saved');
   }
 
   protected updateDefaultFace(uuid: string | null): void {

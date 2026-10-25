@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, OnDestroy, signal, TemplateRef, viewChild } from '@angular/core';
 import { NgbModal, NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'ngx-yet-another-toast-library';
 import { ArduinoCodegenService } from '../../../core/services/codegen/arduino-codegen-service';
 import { ConfigurationService, SystemConfig } from '../../../core/services/configuration-service';
 import { EditorComponent } from "ngx-monaco-editor-v2";
@@ -17,7 +17,7 @@ export class ExportPage implements OnDestroy {
   private readonly arduinoCodegen = inject(ArduinoCodegenService);
   private readonly configService = inject(ConfigurationService);
   private readonly modalService = inject(NgbModal);
-  private readonly toastr = inject(ToastrService);
+  private readonly toast = inject(ToastService);
 
   private readonly importModal = viewChild.required<TemplateRef<unknown>>('importModal');
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
@@ -47,13 +47,13 @@ export class ExportPage implements OnDestroy {
 
   protected async exportArduino(): Promise<void> {
     this.clear();
-    this.toastr.info('Generating Arduino code...');
+    this.toast.info('Generating Arduino code...');
     const code = await this.arduinoCodegen.generateArduinoCode();
     if (code == null) {
-      this.toastr.error('Failed to generate Arduino code. Please check your configuration and try again.');
+      this.toast.error('Failed to generate Arduino code. Please check your configuration and try again.');
       return;
     }
-    this.toastr.success('Arduino code generated successfully. You can now download it or copy it to clipboard.');
+    this.toast.success('Arduino code generated successfully. You can now download it or copy it to clipboard.');
     this.code.set(code);
     this.targetFileName.set("protogen.ino");
   }
@@ -67,7 +67,7 @@ export class ExportPage implements OnDestroy {
     const code = this.code();
     const filename = this.targetFileName() ?? 'export.txt';
     if (!code) {
-      this.toastr.error('There is no code to download.');
+      this.toast.error('There is no code to download.');
       return;
     }
     this.downloadFile(filename, code);
@@ -92,14 +92,14 @@ export class ExportPage implements OnDestroy {
       try {
         const parsed: unknown = JSON.parse(e.target?.result as string);
         if (!this.isValidConfig(parsed)) {
-          this.toastr.error('The selected file does not contain valid protogen configuration data.');
+          this.toast.error('The selected file does not contain valid protogen configuration data.');
           return;
         }
         this.pendingImport.set(parsed);
         this.importModalRef?.close();
         this.importModalRef = this.modalService.open(this.importModal(), { centered: true });
       } catch {
-        this.toastr.error('Failed to parse the selected file. Make sure it is a valid JSON file.');
+        this.toast.error('Failed to parse the selected file. Make sure it is a valid JSON file.');
       }
     };
     reader.readAsText(file);
@@ -110,7 +110,7 @@ export class ExportPage implements OnDestroy {
     if (!config) return;
     this.configService.saveConfig(config);
     this.pendingImport.set(null);
-    this.toastr.success('Configuration imported successfully.');
+    this.toast.success('Configuration imported successfully.');
   }
 
   private isValidConfig(obj: unknown): obj is SystemConfig {

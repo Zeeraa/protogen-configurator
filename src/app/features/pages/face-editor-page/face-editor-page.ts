@@ -12,7 +12,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgbModal, NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigurationService, FaceData, SystemConfig } from '../../../core/services/configuration-service';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'ngx-yet-another-toast-library';
 import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { LedMatrixCanvas } from '../../components/led-matrix-canvas/led-matrix-canvas';
 
@@ -28,7 +28,7 @@ export class FaceEditorPage implements OnInit, OnDestroy, HasUnsavedChanges {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly modalService = inject(NgbModal);
-  private readonly toastr = inject(ToastrService);
+  private readonly toast = inject(ToastService);
 
   private readonly deleteModal = viewChild.required<TemplateRef<unknown>>('deleteModal');
 
@@ -109,7 +109,7 @@ export class FaceEditorPage implements OnInit, OnDestroy, HasUnsavedChanges {
     this.originalName.set(this.name());
     this.originalData.set([...this.data()]);
     this.originalBrightnessOverride.set(brightnessOverride);
-    this.toastr.success('Face saved');
+    this.toast.success('Face saved');
     this.router.navigate(['/faces']);
   }
 
